@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>点击播放</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e1e2f, #2d2d44);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  }
+  .card {
+    text-align: center;
+    color: #fff;
+    padding: 40px;
+  }
+  .disc {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #444 0%, #111 70%);
+    margin: 0 auto 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: spin 8s linear infinite;
+    animation-play-state: paused;
+  }
+  .disc.playing { animation-play-state: running; }
+  .disc::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background: #ddd;
+    border-radius: 50%;
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  button {
+    background: #fff;
+    color: #222;
+    border: none;
+    padding: 14px 40px;
+    font-size: 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  button:active { transform: scale(0.97); }
+  p { margin-top: 20px; color: #aaa; font-size: 14px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="disc" id="disc"></div>
+    <button id="playBtn">▶ 播放</button>
+    <p id="status">点击按钮开始播放</p>
+  </div>
+
+  <audio id="audio" src="audio.mp3" preload="auto"></audio>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const btn = document.getElementById('playBtn');
+    const disc = document.getElementById('disc');
+    const status = document.getElementById('status');
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          btn.textContent = '⏸ 暂停';
+          disc.classList.add('playing');
+          status.textContent = '播放中...';
+        }).catch(err => {
+          status.textContent = '播放失败,请重试';
+        });
+      } else {
+        audio.pause();
+        btn.textContent = '▶ 播放';
+        disc.classList.remove('playing');
+        status.textContent = '已暂停';
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      btn.textContent = '▶ 播放';
+      disc.classList.remove('playing');
+      status.textContent = '播放完毕';
+    });
+  </script>
+</body>
+</html>
